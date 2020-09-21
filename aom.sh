@@ -1,7 +1,7 @@
 #!/bin/bash
 for cpu in 6 5 4 3 2 1 0
 do
-    for i in 50 40 30 20
+    for i in 60 55 50 45 40 35
     do
         runtime=`av1an.py -p 1 --split_method aom_keyframes -s ${1}.csv -i ${1} -v " --threads=12 --end-usage=q --cq-level=$i --cpu-used=$cpu " -o aom${i}_${c} | grep Finished | cut -d' ' -f2 | tr -d '[[:alpha:]]'`
         vmaf=`ffmpeg -r 60 -i aom${i}_${c}.mkv -r 60 -i ${1} -filter_complex libvmaf=psnr=1:ssim=1:ms_ssim=1:log_path=${i}_${c}.json:log_fmt=json -f null - 2>&1 | grep "VMAF score" | tr ' ' '\n' | tail -n1`

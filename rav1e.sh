@@ -1,9 +1,7 @@
 #!/bin/bash
-for cpu in 10 9 8 7 6 5 4 3 2 1 0
-do
-    for i in 150 130 110 90
-    do
-        runtime=`av1an.py -p 1 --split_method aom_keyframes -s ${1}.csv -i ${1} -enc rav1e -v " --quantizer $i -s $cpu " -o rav1e${i}_${c} | grep Finished | cut -d' ' -f2 | tr -d '[[:alpha:]]'`
+for cpu in 10 9 8 7 6 5 4 3 2 1 0 ; do
+    for i in 150 140 130 120 110 100 90 ; do
+        runtime=`av1an.py -p 1 -s 0 -i ${1} -enc rav1e -v " --quantizer $i -s $cpu " -o rav1e${i}_${c} | grep Finished | cut -d' ' -f2 | tr -d '[[:alpha:]]'`
         vmaf=`ffmpeg -r 60 -i rav1e${i}_${c}.mkv -r 60 -i ${1} -filter_complex libvmaf=psnr=1:ssim=1:ms_ssim=1:log_path=${i}_${c}.json:log_fmt=json -f null - 2>&1 | grep "VMAF score" | tr ' ' '\n' | tail -n1`
 
         vmaf=`jq '.["VMAF score"]'  ${i}_${c}.json`

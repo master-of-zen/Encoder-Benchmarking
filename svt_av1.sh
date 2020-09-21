@@ -1,9 +1,9 @@
 #!/bin/bash
 for cpu in 8 7 6 5 4 3 2 1 0
 do
-    for i in  35 30 25 20
+    for i in  50 45 40 35 30 25
     do
-        runtime=`av1an -p 1 --split_method aom_keyframes -s ${1} -i ${1} -enc svt_av1 -v " --qp $i --preset $cpu " -o svt${i}_${c} | grep Finished | cut -d' ' -f2 | tr -d '[[:alpha:]]'`
+        runtime=`av1an -p 1 -s 0 -i ${1} -enc svt_av1 -v " --qp $i --preset $cpu " -o svt${i}_${c} | grep Finished | cut -d' ' -f2 | tr -d '[[:alpha:]]'`
         vmaf=`ffmpeg -r 60 -i svt${i}_${c}.mkv -r 60 -i ${1} -filter_complex libvmaf=psnr=1:ssim=1:ms_ssim=1:log_path=${i}_${c}.json:log_fmt=json -f null - 2>&1 | grep "VMAF score" | tr ' ' '\n' | tail -n1`
 
         vmaf=`jq '.["VMAF score"]'  ${i}_${c}.json`
